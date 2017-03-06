@@ -1,12 +1,31 @@
-import { PropTypes } from 'react';
-import localizer from '../localizer';
-import elementType from 'react-prop-types/lib/elementType';
-import all from 'react-prop-types/lib/all';
-import { views as Views } from './constants';
+'use strict';
 
-import createChainableTypeChecker from 'react-prop-types/lib/utils/createChainableTypeChecker';
+exports.__esModule = true;
+exports.views = exports.dateRangeFormat = exports.dateFormat = exports.accessor = exports.eventComponent = exports.elementType = undefined;
 
-export { elementType }
+var _react = require('react');
+
+var _localizer = require('../localizer');
+
+var _localizer2 = _interopRequireDefault(_localizer);
+
+var _elementType = require('react-prop-types/lib/elementType');
+
+var _elementType2 = _interopRequireDefault(_elementType);
+
+var _all = require('react-prop-types/lib/all');
+
+var _all2 = _interopRequireDefault(_all);
+
+var _constants = require('./constants');
+
+var _createChainableTypeChecker = require('react-prop-types/lib/utils/createChainableTypeChecker');
+
+var _createChainableTypeChecker2 = _interopRequireDefault(_createChainableTypeChecker);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.elementType = _elementType2.default;
 
 // export contextShape = React.PropTypes.shape({
 //   formats: React.PropTypes.object.isRequired,
@@ -19,66 +38,38 @@ export { elementType }
 //   }).isRequired,
 // }).isRequired,
 
-export let eventComponent = PropTypes.oneOfType([
-  elementType,
-  PropTypes.shape({
-    month: elementType,
-    week: elementType,
-    day: elementType,
-    agenda: elementType
-  })
-])
+var eventComponent = exports.eventComponent = _react.PropTypes.oneOfType([_elementType2.default, _react.PropTypes.shape({
+  month: _elementType2.default,
+  week: _elementType2.default,
+  day: _elementType2.default,
+  agenda: _elementType2.default
+})]);
 
+var viewNames = Object.keys(_constants.views).map(function (k) {
+  return _constants.views[k];
+});
 
-let viewNames = Object.keys(Views).map(k => Views[k])
+var accessor = exports.accessor = _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.func]);
 
-export let accessor = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.func
-])
+var dateFormat = exports.dateFormat = (0, _createChainableTypeChecker2.default)(function () {
+  return _localizer2.default.propType && _localizer2.default.propType.apply(_localizer2.default, arguments);
+});
 
-export let dateFormat = createChainableTypeChecker(
-    (...args) => localizer.propType && localizer.propType(...args))
+var dateRangeFormat = exports.dateRangeFormat = _react.PropTypes.func;
 
-export let dateRangeFormat = PropTypes.func
+var views = exports.views = _react.PropTypes.oneOfType([_react.PropTypes.arrayOf(_react.PropTypes.oneOf(viewNames)), (0, _all2.default)([_react.PropTypes.object, function (props, name) {
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
+  }
 
-/**
- * accepts either an array of builtin view names:
- *
- * ```
- * views={['month', 'day', 'agenda']}
- * ```
- *
- * or an object hash of the view name and the component (or boolean for builtin)
- *
- * ```
- * views={{
- *   month: true,
- *   week: false,
- *   workweek: WorkWeekViewComponent,
- * }}
- * ```
- * @type {[type]}
- */
-export let views = PropTypes.oneOfType([
-  PropTypes.arrayOf(
-    PropTypes.oneOf(viewNames)
-  ),
-  all([
-    PropTypes.object,
-    (props, name, ...args)=>{
-      let prop = props[name]
-        , err;
+  var prop = props[name],
+      err = void 0;
 
-      Object.keys(prop).every(key => {
-        let isBuiltinView =
-          viewNames.indexOf(key) !== -1 &&
-          typeof prop[key] === 'boolean';
+  Object.keys(prop).every(function (key) {
+    var isBuiltinView = viewNames.indexOf(key) !== -1 && typeof prop[key] === 'boolean';
 
-        return isBuiltinView || !(err = elementType(prop, key, ...args))
-      })
+    return isBuiltinView || !(err = _elementType2.default.apply(undefined, [prop, key].concat(args)));
+  });
 
-      return err || null
-    }
-  ])
-])
+  return err || null;
+}])]);

@@ -1,86 +1,130 @@
-import React from 'react';
-import cn from 'classnames';
-import message from './utils/messages';
-import { navigate } from './utils/constants';
+'use strict';
 
-class Toolbar extends React.Component {
-  static propTypes = {
-    view: React.PropTypes.string.isRequired,
-    views: React.PropTypes.arrayOf(
-      React.PropTypes.string,
-    ).isRequired,
-    label: React.PropTypes.node.isRequired,
-    messages: React.PropTypes.object,
-    onNavigate: React.PropTypes.func.isRequired,
-    onViewChange: React.PropTypes.func.isRequired,
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _messages = require('./utils/messages');
+
+var _messages2 = _interopRequireDefault(_messages);
+
+var _constants = require('./utils/constants');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Toolbar = function (_React$Component) {
+  _inherits(Toolbar, _React$Component);
+
+  function Toolbar() {
+    var _temp, _this, _ret;
+
+    _classCallCheck(this, Toolbar);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args))), _this), _this.navigate = function (action) {
+      _this.props.onNavigate(action);
+    }, _this.view = function (view) {
+      _this.props.onViewChange(view);
+    }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
-  render() {
-    let { messages, label } = this.props;
+  Toolbar.prototype.render = function render() {
+    var _props = this.props,
+        messages = _props.messages,
+        label = _props.label;
 
-    messages = message(messages)
 
-    return (
-      <div className='rbc-toolbar'>
-        <span className='rbc-btn-group'>
-          <button
-            type='button'
-            onClick={this.navigate.bind(null, navigate.TODAY)}
-          >
-            {messages.today}
-          </button>
-          <button
-            type='button'
-            onClick={this.navigate.bind(null, navigate.PREVIOUS)}
-          >
-            {messages.previous}
-          </button>
-          <button
-            type='button'
-            onClick={this.navigate.bind(null, navigate.NEXT)}
-          >
-            {messages.next}
-          </button>
-        </span>
+    messages = (0, _messages2.default)(messages);
 
-        <span className='rbc-toolbar-label'>
-          { label }
-        </span>
-
-        <span className='rbc-btn-group'>
-        {
-          this.viewNamesGroup(messages)
-        }
-        </span>
-      </div>
+    return _react2.default.createElement(
+      'div',
+      { className: 'rbc-toolbar' },
+      _react2.default.createElement(
+        'span',
+        { className: 'rbc-btn-group' },
+        _react2.default.createElement(
+          'button',
+          {
+            type: 'button',
+            onClick: this.navigate.bind(null, _constants.navigate.TODAY)
+          },
+          messages.today
+        ),
+        _react2.default.createElement(
+          'button',
+          {
+            type: 'button',
+            onClick: this.navigate.bind(null, _constants.navigate.PREVIOUS)
+          },
+          messages.previous
+        ),
+        _react2.default.createElement(
+          'button',
+          {
+            type: 'button',
+            onClick: this.navigate.bind(null, _constants.navigate.NEXT)
+          },
+          messages.next
+        )
+      ),
+      _react2.default.createElement(
+        'span',
+        { className: 'rbc-toolbar-label' },
+        label
+      ),
+      _react2.default.createElement(
+        'span',
+        { className: 'rbc-btn-group' },
+        this.viewNamesGroup(messages)
+      )
     );
-  }
+  };
 
-  navigate = (action) => {
-    this.props.onNavigate(action)
-  }
+  Toolbar.prototype.viewNamesGroup = function viewNamesGroup(messages) {
+    var _this2 = this;
 
-  view = (view) => {
-    this.props.onViewChange(view)
-  }
-
-  viewNamesGroup(messages) {
-    let viewNames = this.props.views
-    const view = this.props.view
+    var viewNames = this.props.views;
+    var view = this.props.view;
 
     if (viewNames.length > 1) {
-      return (
-        viewNames.map(name =>
-          <button type='button' key={name}
-            className={cn({'rbc-active': view === name})}
-            onClick={this.view.bind(null, name)}
-          >
-            {messages[name]}
-          </button>
-        )
-      )
+      return viewNames.map(function (name) {
+        return _react2.default.createElement(
+          'button',
+          { type: 'button', key: name,
+            className: (0, _classnames2.default)({ 'rbc-active': view === name }),
+            onClick: _this2.view.bind(null, name)
+          },
+          messages[name]
+        );
+      });
     }
-  }
-}
+  };
 
-export default Toolbar;
+  return Toolbar;
+}(_react2.default.Component);
+
+Toolbar.propTypes = {
+  view: _react2.default.PropTypes.string.isRequired,
+  views: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string).isRequired,
+  label: _react2.default.PropTypes.node.isRequired,
+  messages: _react2.default.PropTypes.object,
+  onNavigate: _react2.default.PropTypes.func.isRequired,
+  onViewChange: _react2.default.PropTypes.func.isRequired
+};
+exports.default = Toolbar;
+module.exports = exports['default'];

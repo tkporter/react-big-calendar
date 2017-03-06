@@ -1,14 +1,30 @@
-import { views } from './utils/constants';
-import Month from './Month';
-import Day from './Day';
-import Week from './Week';
-import Agenda from './Agenda';
+'use strict';
 
-const VIEWS = {
-  [views.MONTH]: Month,
-  [views.WEEK]: Week,
-  [views.DAY]: Day,
-  [views.AGENDA]: Agenda
-};
+exports.__esModule = true;
 
-export default VIEWS;
+var _VIEWS;
+
+var _constants = require('./utils/constants');
+
+var _Month = require('./Month');
+
+var _Month2 = _interopRequireDefault(_Month);
+
+var _Day = require('./Day');
+
+var _Day2 = _interopRequireDefault(_Day);
+
+var _Week = require('./Week');
+
+var _Week2 = _interopRequireDefault(_Week);
+
+var _Agenda = require('./Agenda');
+
+var _Agenda2 = _interopRequireDefault(_Agenda);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var VIEWS = (_VIEWS = {}, _VIEWS[_constants.views.MONTH] = _Month2.default, _VIEWS[_constants.views.WEEK] = _Week2.default, _VIEWS[_constants.views.DAY] = _Day2.default, _VIEWS[_constants.views.AGENDA] = _Agenda2.default, _VIEWS);
+
+exports.default = VIEWS;
+module.exports = exports['default'];

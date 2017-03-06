@@ -1,34 +1,72 @@
-import React from 'react'
-import { DropTarget } from 'react-dnd'
-import cn from 'classnames';
+'use strict';
 
-import dates from '../../utils/dates';
-import BigCalendar from '../../index'
+exports.__esModule = true;
+exports.DayWrapper = exports.DateCellWrapper = undefined;
 
-export function getEventTimes({ start, end }, dropDate, type) {
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.getEventTimes = getEventTimes;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDnd = require('react-dnd');
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _dates = require('../../utils/dates');
+
+var _dates2 = _interopRequireDefault(_dates);
+
+var _index = require('../../index');
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function getEventTimes(_ref, dropDate, type) {
+  var start = _ref.start,
+      end = _ref.end;
+
   // Calculate duration between original start and end dates
-  const duration = dates.diff(start, end)
+  var duration = _dates2.default.diff(start, end);
 
   // If the event is dropped in a "Day" cell, preserve an event's start time by extracting the hours and minutes off
   // the original start date and add it to newDate.value
-  const nextStart = type === 'dateCellWrapper'
-    ? dates.merge(dropDate, start) : dropDate
+  var nextStart = type === 'dateWrapper' ? _dates2.default.merge(dropDate, start) : dropDate;
 
-  const nextEnd = dates.add(nextStart, duration, 'milliseconds')
+  var nextEnd = _dates2.default.add(nextStart, duration, 'milliseconds');
 
   return {
     start: nextStart,
     end: nextEnd
+  };
+}
+
+var propTypes = {
+  connectDropTarget: _react2.default.PropTypes.func.isRequired,
+  type: _react2.default.PropTypes.string,
+  isOver: _react2.default.PropTypes.bool
+};
+
+var DraggableBackgroundWrapper = function (_React$Component) {
+  _inherits(DraggableBackgroundWrapper, _React$Component);
+
+  function DraggableBackgroundWrapper() {
+    _classCallCheck(this, DraggableBackgroundWrapper);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
   }
-}
 
-const propTypes = {
-  connectDropTarget: React.PropTypes.func.isRequired,
-  type: React.PropTypes.string,
-  isOver: React.PropTypes.bool,
-}
-
-class DraggableBackgroundWrapper extends React.Component {
   // constructor(...args) {
   //   super(...args);
   //   this.state = { isOver: false };
@@ -69,55 +107,64 @@ class DraggableBackgroundWrapper extends React.Component {
   //   }
   // };
 
-  render() {
-    const { connectDropTarget, children, type, isOver } = this.props;
-    const BackgroundWrapper = BigCalendar.components[type];
+  DraggableBackgroundWrapper.prototype.render = function render() {
+    var _props = this.props,
+        connectDropTarget = _props.connectDropTarget,
+        children = _props.children,
+        type = _props.type,
+        isOver = _props.isOver;
 
-    let resultingChildren = children
-    if (isOver)
-      resultingChildren = React.cloneElement(children, {
-        className: cn(children.props.className, 'rbc-addons-dnd-over')
-      })
+    var BackgroundWrapper = _index2.default.components[type];
 
-    return (
-      <BackgroundWrapper>
-        {connectDropTarget(resultingChildren)}
-      </BackgroundWrapper>
+    var resultingChildren = children;
+    if (isOver) resultingChildren = _react2.default.cloneElement(children, {
+      className: (0, _classnames2.default)(children.props.className, 'rbc-addons-dnd-over')
+    });
+
+    return _react2.default.createElement(
+      BackgroundWrapper,
+      null,
+      connectDropTarget(resultingChildren)
     );
-  }
-}
+  };
+
+  return DraggableBackgroundWrapper;
+}(_react2.default.Component);
+
 DraggableBackgroundWrapper.propTypes = propTypes;
 
 DraggableBackgroundWrapper.contextTypes = {
-  onEventDrop: React.PropTypes.func,
-  dragDropManager: React.PropTypes.object
-}
+  onEventDrop: _react2.default.PropTypes.func,
+  dragDropManager: _react2.default.PropTypes.object
+};
 
 function createWrapper(type) {
   function collectTarget(connect, monitor) {
     return {
-      type,
+      type: type,
       connectDropTarget: connect.dropTarget(),
       isOver: monitor.isOver()
     };
   }
 
+  var dropTarget = {
+    drop: function drop(_, monitor, _ref2) {
+      var props = _ref2.props,
+          context = _ref2.context;
 
-  const dropTarget = {
-    drop(_, monitor, { props, context }) {
-      const event = monitor.getItem();
-      const { value } = props
-      const { onEventDrop } = context
+      var event = monitor.getItem();
+      var value = props.value;
+      var onEventDrop = context.onEventDrop;
 
-      onEventDrop({
-        event,
-        ...getEventTimes(event, value, type)
-      })
+
+      onEventDrop(_extends({
+        event: event
+      }, getEventTimes(event, value, type)));
     }
   };
 
-  return DropTarget(['event'], dropTarget, collectTarget)(DraggableBackgroundWrapper);
+  return (0, _reactDnd.DropTarget)(['event'], dropTarget, collectTarget)(DraggableBackgroundWrapper);
 }
 
-export const DateCellWrapper = createWrapper('dateCellWrapper');
-export const DayWrapper = createWrapper('dayWrapper');
+var DateCellWrapper = exports.DateCellWrapper = createWrapper('dateCellWrapper');
+var DayWrapper = exports.DayWrapper = createWrapper('dayWrapper');

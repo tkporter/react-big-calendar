@@ -1,46 +1,60 @@
-import React from 'react';
-import EventRowMixin from './EventRowMixin';
+'use strict';
 
+exports.__esModule = true;
 
-let EventRow = React.createClass({
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _EventRowMixin = require('./EventRowMixin');
+
+var _EventRowMixin2 = _interopRequireDefault(_EventRowMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventRow = _react2.default.createClass({
 
   displayName: 'EventRow',
 
   propTypes: {
-    segments: React.PropTypes.array
+    segments: _react2.default.PropTypes.array
   },
 
-  mixins: [EventRowMixin],
+  mixins: [_EventRowMixin2.default],
 
-  render(){
-    let { segments } = this.props;
+  render: function render() {
+    var _this = this;
 
-    let lastEnd = 1;
+    var segments = this.props.segments;
 
-    return (
-      <div className='rbc-row'>
-      {
-        segments.reduce((row, { event, left, right, span }, li) => {
-          let key = '_lvl_' + li;
-          let gap = left - lastEnd;
 
-          let content = this.renderEvent(event)
+    var lastEnd = 1;
 
-          if (gap)
-            row.push(this.renderSpan(gap, key + '_gap'))
+    return _react2.default.createElement(
+      'div',
+      { className: 'rbc-row' },
+      segments.reduce(function (row, _ref, li) {
+        var event = _ref.event,
+            left = _ref.left,
+            right = _ref.right,
+            span = _ref.span;
 
-          row.push(
-            this.renderSpan(span, key, content)
-          )
+        var key = '_lvl_' + li;
+        var gap = left - lastEnd;
 
-          lastEnd = (right + 1);
+        var content = _this.renderEvent(event);
 
-          return row;
-        }, [])
-      }
-      </div>
-    )
+        if (gap) row.push(_this.renderSpan(gap, key + '_gap'));
+
+        row.push(_this.renderSpan(span, key, content));
+
+        lastEnd = right + 1;
+
+        return row;
+      }, [])
+    );
   }
 });
 
-export default EventRow
+exports.default = EventRow;
+module.exports = exports['default'];

@@ -1,220 +1,302 @@
-import cn from 'classnames';
-import getHeight from 'dom-helpers/query/height';
-import qsa from 'dom-helpers/query/querySelectorAll';
-import React from 'react';
-import { findDOMNode } from 'react-dom';
+'use strict';
 
-import dates from './utils/dates';
-import { accessor, elementType } from './utils/propTypes';
-import { segStyle, eventSegments, endOfRange, eventLevels } from './utils/eventLevels';
-import BackgroundCells from './BackgroundCells';
-import EventRow from './EventRow';
-import EventEndingRow from './EventEndingRow';
+exports.__esModule = true;
 
-let isSegmentInSlot = (seg, slot) => seg.left <= slot && seg.right >= slot;
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-const propTypes = {
-  events: React.PropTypes.array.isRequired,
-  range: React.PropTypes.array.isRequired,
+var _classnames = require('classnames');
 
-  rtl: React.PropTypes.bool,
-  renderForMeasure: React.PropTypes.bool,
-  renderHeader: React.PropTypes.func,
+var _classnames2 = _interopRequireDefault(_classnames);
 
-  container: React.PropTypes.func,
-  selected: React.PropTypes.object,
-  selectable: React.PropTypes.oneOf([true, false, 'ignoreEvents']),
+var _height = require('dom-helpers/query/height');
 
-  onShowMore: React.PropTypes.func,
-  onSelectSlot: React.PropTypes.func,
-  onSelectEnd: React.PropTypes.func,
-  onSelectStart: React.PropTypes.func,
+var _height2 = _interopRequireDefault(_height);
 
-  startAccessor: accessor.isRequired,
-  endAccessor: accessor.isRequired,
+var _querySelectorAll = require('dom-helpers/query/querySelectorAll');
 
-  dateCellWrapper: elementType,
-  eventComponent: elementType,
-  eventWrapperComponent: elementType.isRequired,
-  minRows: React.PropTypes.number.isRequired,
-  maxRows: React.PropTypes.number.isRequired,
+var _querySelectorAll2 = _interopRequireDefault(_querySelectorAll);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _dates = require('./utils/dates');
+
+var _dates2 = _interopRequireDefault(_dates);
+
+var _propTypes = require('./utils/propTypes');
+
+var _eventLevels2 = require('./utils/eventLevels');
+
+var _BackgroundCells = require('./BackgroundCells');
+
+var _BackgroundCells2 = _interopRequireDefault(_BackgroundCells);
+
+var _EventRow = require('./EventRow');
+
+var _EventRow2 = _interopRequireDefault(_EventRow);
+
+var _EventEndingRow = require('./EventEndingRow');
+
+var _EventEndingRow2 = _interopRequireDefault(_EventEndingRow);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var isSegmentInSlot = function isSegmentInSlot(seg, slot) {
+  return seg.left <= slot && seg.right >= slot;
 };
 
-const defaultProps = {
+var propTypes = {
+  events: _react2.default.PropTypes.array.isRequired,
+  range: _react2.default.PropTypes.array.isRequired,
+
+  rtl: _react2.default.PropTypes.bool,
+  renderForMeasure: _react2.default.PropTypes.bool,
+  renderHeader: _react2.default.PropTypes.func,
+
+  container: _react2.default.PropTypes.func,
+  selected: _react2.default.PropTypes.object,
+  selectable: _react2.default.PropTypes.oneOf([true, false, 'ignoreEvents']),
+
+  onShowMore: _react2.default.PropTypes.func,
+  onSelectSlot: _react2.default.PropTypes.func,
+  onSelectEnd: _react2.default.PropTypes.func,
+  onSelectStart: _react2.default.PropTypes.func,
+
+  startAccessor: _propTypes.accessor.isRequired,
+  endAccessor: _propTypes.accessor.isRequired,
+
+  dateCellWrapper: _propTypes.elementType,
+  eventComponent: _propTypes.elementType,
+  eventWrapperComponent: _propTypes.elementType.isRequired,
+  minRows: _react2.default.PropTypes.number.isRequired,
+  maxRows: _react2.default.PropTypes.number.isRequired
+};
+
+var defaultProps = {
   minRows: 0,
-  maxRows: Infinity,
-}
+  maxRows: Infinity
+};
 
-class DateContentRow extends React.Component {
+var DateContentRow = function (_React$Component) {
+  _inherits(DateContentRow, _React$Component);
 
-  constructor(...args) {
-    super(...args);
+  function DateContentRow() {
+    _classCallCheck(this, DateContentRow);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args)));
+
+    _this.handleSelectSlot = function (slot) {
+      var _this$props = _this.props,
+          range = _this$props.range,
+          onSelectSlot = _this$props.onSelectSlot;
+
+      onSelectSlot(range.slice(slot.start, slot.end + 1), slot);
+    };
+
+    _this.handleShowMore = function (slot) {
+      var _this$props2 = _this.props,
+          range = _this$props2.range,
+          onShowMore = _this$props2.onShowMore;
+
+      var row = (0, _querySelectorAll2.default)((0, _reactDom.findDOMNode)(_this), '.rbc-row-bg')[0];
+
+      var cell = void 0;
+      if (row) cell = row.children[slot - 1];
+
+      var events = _this.segments.filter(function (seg) {
+        return isSegmentInSlot(seg, slot);
+      }).map(function (seg) {
+        return seg.event;
+      });
+
+      onShowMore(events, range[slot - 1], cell, slot);
+    };
+
+    _this.createHeadingRef = function (r) {
+      _this.headingRow = r;
+    };
+
+    _this.createEventRef = function (r) {
+      _this.eventRow = r;
+    };
+
+    _this.getContainer = function () {
+      var container = _this.props.container;
+
+      return container ? container() : (0, _reactDom.findDOMNode)(_this);
+    };
+
+    _this.renderHeadingCell = function (date, index) {
+      var _this$props3 = _this.props,
+          renderHeader = _this$props3.renderHeader,
+          range = _this$props3.range;
+
+
+      return renderHeader({
+        date: date,
+        key: 'header_' + index,
+        style: (0, _eventLevels2.segStyle)(1, range.length),
+        className: (0, _classnames2.default)('rbc-date-cell', _dates2.default.eq(date, new Date(), 'day') && 'rbc-now')
+      });
+    };
+
+    _this.renderDummy = function () {
+      var _this$props4 = _this.props,
+          className = _this$props4.className,
+          range = _this$props4.range,
+          renderHeader = _this$props4.renderHeader;
+
+      return _react2.default.createElement(
+        'div',
+        { className: className },
+        _react2.default.createElement(
+          'div',
+          { className: 'rbc-row-content' },
+          renderHeader && _react2.default.createElement(
+            'div',
+            { className: 'rbc-row', ref: _this.createHeadingRef },
+            range.map(_this.renderHeadingCell)
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'rbc-row', ref: _this.createEventRef },
+            _react2.default.createElement(
+              'div',
+              { className: 'rbc-row-segment', style: (0, _eventLevels2.segStyle)(1, range.length) },
+              _react2.default.createElement(
+                'div',
+                { className: 'rbc-event' },
+                _react2.default.createElement(
+                  'div',
+                  { className: 'rbc-event-content' },
+                  '\xA0'
+                )
+              )
+            )
+          )
+        )
+      );
+    };
+
+    return _this;
   }
 
-  handleSelectSlot = (slot) => {
-    const { range, onSelectSlot } = this.props;
 
-    onSelectSlot(
-      range.slice(slot.start, slot.end + 1),
-      slot,
-    )
-  }
 
-  handleShowMore = (slot) => {
-    const { range, onShowMore } = this.props;
-    let row = qsa(findDOMNode(this), '.rbc-row-bg')[0]
+  DateContentRow.prototype.getRowLimit = function getRowLimit() {
+    var eventHeight = (0, _height2.default)(this.eventRow);
+    var headingHeight = this.headingRow ? (0, _height2.default)(this.headingRow) : 0;
+    var eventSpace = (0, _height2.default)((0, _reactDom.findDOMNode)(this)) - headingHeight;
 
-    let cell;
-    if (row) cell = row.children[slot-1]
+    return Math.max(Math.floor(eventSpace / eventHeight), 1);
+  };
 
-    let events = this.segments
-      .filter(seg => isSegmentInSlot(seg, slot))
-      .map(seg => seg.event)
+  DateContentRow.prototype.render = function render() {
+    var _props = this.props,
+        rtl = _props.rtl,
+        events = _props.events,
+        range = _props.range,
+        className = _props.className,
+        selectable = _props.selectable,
+        renderForMeasure = _props.renderForMeasure,
+        startAccessor = _props.startAccessor,
+        endAccessor = _props.endAccessor,
+        renderHeader = _props.renderHeader,
+        minRows = _props.minRows,
+        maxRows = _props.maxRows,
+        dateCellWrapper = _props.dateCellWrapper,
+        eventComponent = _props.eventComponent,
+        eventWrapperComponent = _props.eventWrapperComponent,
+        onSelectStart = _props.onSelectStart,
+        onSelectEnd = _props.onSelectEnd,
+        props = _objectWithoutProperties(_props, ['rtl', 'events', 'range', 'className', 'selectable', 'renderForMeasure', 'startAccessor', 'endAccessor', 'renderHeader', 'minRows', 'maxRows', 'dateCellWrapper', 'eventComponent', 'eventWrapperComponent', 'onSelectStart', 'onSelectEnd']);
 
-    onShowMore(events, range[slot-1], cell, slot)
-  }
+    if (renderForMeasure) return this.renderDummy();
 
-  createHeadingRef = r => {
-    this.headingRow = r;
-  }
+    var _endOfRange = (0, _eventLevels2.endOfRange)(range),
+        first = _endOfRange.first,
+        last = _endOfRange.last;
 
-  createEventRef = r => {
-    this.eventRow = r;
-  }
+    var segments = this.segments = events.map(function (evt) {
+      return (0, _eventLevels2.eventSegments)(evt, first, last, {
+        startAccessor: startAccessor,
+        endAccessor: endAccessor
+      });
+    });
 
-  getContainer = () => {
-    const { container } = this.props;
-    return container ? container() : findDOMNode(this)
-  }
+    var _eventLevels = (0, _eventLevels2.eventLevels)(segments, Math.max(maxRows - 1, 1)),
+        levels = _eventLevels.levels,
+        extra = _eventLevels.extra;
 
-  getRowLimit() {
-    let eventHeight = getHeight(this.eventRow);
-    let headingHeight = this.headingRow ? getHeight(this.headingRow) : 0
-    let eventSpace = getHeight(findDOMNode(this)) - headingHeight;
-
-    return Math.max(Math.floor(eventSpace / eventHeight), 1)
-  }
-
-  renderHeadingCell = (date, index) => {
-    let { renderHeader, range } = this.props;
-
-    return renderHeader({
-      date,
-      key: `header_${index}`,
-      style: segStyle(1, range.length),
-      className: cn(
-        'rbc-date-cell',
-        dates.eq(date, new Date(), 'day') && 'rbc-now', // FIXME use props.now
+    while (levels.length < minRows) {
+      levels.push([]);
+    }return _react2.default.createElement(
+      'div',
+      { className: className },
+      _react2.default.createElement(_BackgroundCells2.default, {
+        rtl: rtl,
+        range: range,
+        selectable: selectable,
+        container: this.getContainer,
+        onSelectStart: onSelectStart,
+        onSelectEnd: onSelectEnd,
+        onSelectSlot: this.handleSelectSlot,
+        cellWrapperComponent: dateCellWrapper,
+        selectedDate: _props.selectedDate
+      }),
+      _react2.default.createElement(
+        'div',
+        { className: 'rbc-row-content' },
+        renderHeader && _react2.default.createElement(
+          'div',
+          { className: 'rbc-row', ref: this.createHeadingRef },
+          range.map(this.renderHeadingCell)
+        ),
+        levels.map(function (segs, idx) {
+          return _react2.default.createElement(_EventRow2.default, _extends({}, props, {
+            key: idx,
+            start: first,
+            end: last,
+            segments: segs,
+            slots: range.length,
+            eventComponent: eventComponent,
+            eventWrapperComponent: eventWrapperComponent,
+            startAccessor: startAccessor,
+            endAccessor: endAccessor
+          }));
+        }),
+        !!extra.length && _react2.default.createElement(_EventEndingRow2.default, _extends({}, props, {
+          start: first,
+          end: last,
+          segments: extra,
+          onShowMore: this.handleShowMore,
+          eventComponent: eventComponent,
+          eventWrapperComponent: eventWrapperComponent
+        }))
       )
-    })
-  }
-
-  renderDummy = () => {
-    let { className, range, renderHeader } = this.props;
-    return (
-      <div className={className}>
-        <div className='rbc-row-content'>
-          {renderHeader && (
-            <div className='rbc-row' ref={this.createHeadingRef}>
-              {range.map(this.renderHeadingCell)}
-            </div>
-          )}
-          <div className='rbc-row' ref={this.createEventRef}>
-            <div className='rbc-row-segment' style={segStyle(1, range.length)}>
-              <div className='rbc-event'>
-                <div className='rbc-event-content'>&nbsp;</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  render() {
-    const {
-      rtl,
-      events,
-      range,
-      className,
-      selectable,
-      renderForMeasure,
-      startAccessor,
-      endAccessor,
-      renderHeader,
-      minRows, maxRows,
-      dateCellWrapper,
-      eventComponent,
-      eventWrapperComponent,
-      onSelectStart,
-      onSelectEnd,
-      ...props
-    } = this.props;
-
-    if (renderForMeasure)
-      return this.renderDummy();
-
-    let { first, last } = endOfRange(range);
-
-    let segments = this.segments = events.map(evt => eventSegments(evt, first, last, {
-      startAccessor,
-      endAccessor
-    }))
-
-    let { levels, extra } = eventLevels(segments, Math.max(maxRows - 1, 1));
-    while (levels.length < minRows ) levels.push([])
-
-    return (
-      <div className={className}>
-        <BackgroundCells
-          rtl={rtl}
-          range={range}
-          selectable={selectable}
-          container={this.getContainer}
-          onSelectStart={onSelectStart}
-          onSelectEnd={onSelectEnd}
-          onSelectSlot={this.handleSelectSlot}
-          cellWrapperComponent={dateCellWrapper}
-        />
-
-        <div className='rbc-row-content'>
-          {renderHeader && (
-            <div className='rbc-row' ref={this.createHeadingRef}>
-              {range.map(this.renderHeadingCell)}
-            </div>
-          )}
-          {levels.map((segs, idx) =>
-            <EventRow
-              {...props}
-              key={idx}
-              start={first}
-              end={last}
-              segments={segs}
-              slots={range.length}
-              eventComponent={eventComponent}
-              eventWrapperComponent={eventWrapperComponent}
-              startAccessor={startAccessor}
-              endAccessor={endAccessor}
-            />
-          )}
-          {!!extra.length && (
-            <EventEndingRow
-              {...props}
-              start={first}
-              end={last}
-              segments={extra}
-              onShowMore={this.handleShowMore}
-              eventComponent={eventComponent}
-              eventWrapperComponent={eventWrapperComponent}
-            />
-          )}
-        </div>
-      </div>
     );
-  }
-}
+  };
+
+  return DateContentRow;
+}(_react2.default.Component);
 
 DateContentRow.propTypes = propTypes;
 DateContentRow.defaultProps = defaultProps;
 
-export default DateContentRow
+exports.default = DateContentRow;
+module.exports = exports['default'];

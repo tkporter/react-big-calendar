@@ -1,75 +1,118 @@
-import React from 'react';
-import cn from 'classnames';
-import dates from './utils/dates';
-import { accessor, elementType } from './utils/propTypes';
-import { accessor as get } from './utils/accessors';
+'use strict';
 
-let propTypes = {
-  event: React.PropTypes.object.isRequired,
-  slotStart: React.PropTypes.instanceOf(Date),
-  slotEnd: React.PropTypes.instanceOf(Date),
+exports.__esModule = true;
 
-  selected: React.PropTypes.bool,
-  eventPropGetter: React.PropTypes.func,
-  titleAccessor: accessor,
-  allDayAccessor: accessor,
-  startAccessor: accessor,
-  endAccessor: accessor,
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-  eventComponent: elementType,
-  eventWrapperComponent: elementType.isRequired,
-  onSelect: React.PropTypes.func
-}
+var _react = require('react');
 
-class EventCell extends React.Component {
-  render() {
-    let {
-        className
-      , event
-      , selected
-      , eventPropGetter
-      , startAccessor, endAccessor, titleAccessor
-      , slotStart
-      , slotEnd
-      , onSelect
-      , eventComponent: Event
-      , eventWrapperComponent: EventWrapper
-      , ...props } = this.props;
+var _react2 = _interopRequireDefault(_react);
 
-    let title = get(event, titleAccessor)
-      , end = get(event, endAccessor)
-      , start = get(event, startAccessor)
-      , isAllDay = get(event, props.allDayAccessor)
-      , continuesPrior = dates.lt(start, slotStart, 'day')
-      , continuesAfter = dates.gt(end, slotEnd, 'day')
+var _classnames = require('classnames');
 
-    if (eventPropGetter)
-      var { style, className: xClassName } = eventPropGetter(event, start, end, selected);
+var _classnames2 = _interopRequireDefault(_classnames);
 
-    return (
-      <EventWrapper event={event}>
-        <div
-          style={{...props.style, ...style}}
-          className={cn('rbc-event', className, xClassName, {
+var _dates = require('./utils/dates');
+
+var _dates2 = _interopRequireDefault(_dates);
+
+var _propTypes = require('./utils/propTypes');
+
+var _accessors = require('./utils/accessors');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var propTypes = {
+  event: _react2.default.PropTypes.object.isRequired,
+  slotStart: _react2.default.PropTypes.instanceOf(Date),
+  slotEnd: _react2.default.PropTypes.instanceOf(Date),
+
+  selected: _react2.default.PropTypes.bool,
+  eventPropGetter: _react2.default.PropTypes.func,
+  titleAccessor: _propTypes.accessor,
+  allDayAccessor: _propTypes.accessor,
+  startAccessor: _propTypes.accessor,
+  endAccessor: _propTypes.accessor,
+
+  eventComponent: _propTypes.elementType,
+  eventWrapperComponent: _propTypes.elementType.isRequired,
+  onSelect: _react2.default.PropTypes.func
+};
+
+var EventCell = function (_React$Component) {
+  _inherits(EventCell, _React$Component);
+
+  function EventCell() {
+    _classCallCheck(this, EventCell);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  EventCell.prototype.render = function render() {
+    var _props = this.props,
+        className = _props.className,
+        event = _props.event,
+        selected = _props.selected,
+        eventPropGetter = _props.eventPropGetter,
+        startAccessor = _props.startAccessor,
+        endAccessor = _props.endAccessor,
+        titleAccessor = _props.titleAccessor,
+        slotStart = _props.slotStart,
+        slotEnd = _props.slotEnd,
+        onSelect = _props.onSelect,
+        Event = _props.eventComponent,
+        EventWrapper = _props.eventWrapperComponent,
+        props = _objectWithoutProperties(_props, ['className', 'event', 'selected', 'eventPropGetter', 'startAccessor', 'endAccessor', 'titleAccessor', 'slotStart', 'slotEnd', 'onSelect', 'eventComponent', 'eventWrapperComponent']);
+
+    var title = (0, _accessors.accessor)(event, titleAccessor),
+        end = (0, _accessors.accessor)(event, endAccessor),
+        start = (0, _accessors.accessor)(event, startAccessor),
+        isAllDay = (0, _accessors.accessor)(event, props.allDayAccessor),
+        continuesPrior = _dates2.default.lt(start, slotStart, 'day'),
+        continuesAfter = _dates2.default.gt(end, slotEnd, 'day');
+
+    if (eventPropGetter) var _eventPropGetter = eventPropGetter(event, start, end, selected),
+          style = _eventPropGetter.style,
+          xClassName = _eventPropGetter.className;
+
+    return _react2.default.createElement(
+      EventWrapper,
+      { event: event },
+      _react2.default.createElement(
+        'div',
+        {
+          style: _extends({}, props.style, style),
+          className: (0, _classnames2.default)('rbc-event', className, xClassName, {
             'rbc-selected': selected,
-            'rbc-event-allday': isAllDay || dates.diff(start, dates.ceil(end, 'day'), 'day') > 1,
+            'rbc-event-allday': isAllDay || _dates2.default.diff(start, _dates2.default.ceil(end, 'day'), 'day') > 1,
             'rbc-event-continues-prior': continuesPrior,
             'rbc-event-continues-after': continuesAfter
-          })}
-          onClick={(e) => onSelect(event, e)}
-        >
-          <div className='rbc-event-content' title={title}>
-            { Event
-              ? <Event event={event} title={title}/>
-              : title
-            }
-          </div>
-        </div>
-      </EventWrapper>
+          }),
+          onClick: function onClick(e) {
+            return onSelect(event, e);
+          }
+        },
+        _react2.default.createElement(
+          'div',
+          { className: 'rbc-event-content', title: title },
+          Event ? _react2.default.createElement(Event, { event: event, title: title }) : title
+        )
+      )
     );
-  }
-}
+  };
+
+  return EventCell;
+}(_react2.default.Component);
 
 EventCell.propTypes = propTypes;
 
-export default EventCell
+exports.default = EventCell;
+module.exports = exports['default'];

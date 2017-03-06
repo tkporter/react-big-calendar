@@ -1,97 +1,120 @@
-import dates from './dates';
-import { accessor as get } from './accessors';
+'use strict';
 
-export function endOfRange(dateRange, unit = 'day') {
+exports.__esModule = true;
+exports.endOfRange = endOfRange;
+exports.eventSegments = eventSegments;
+exports.segStyle = segStyle;
+exports.eventLevels = eventLevels;
+exports.inRange = inRange;
+exports.segsOverlap = segsOverlap;
+exports.sortEvents = sortEvents;
+
+var _dates = require('./dates');
+
+var _dates2 = _interopRequireDefault(_dates);
+
+var _accessors = require('./accessors');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function endOfRange(dateRange) {
+  var unit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'day';
+
   return {
     first: dateRange[0],
-    last: dates.add(dateRange[dateRange.length - 1], 1, unit)
-  }
+    last: _dates2.default.add(dateRange[dateRange.length - 1], 1, unit)
+  };
 }
 
-export function eventSegments(event, first, last, { startAccessor, endAccessor }) {
-  let slots = dates.diff(first, last, 'day')
-  let start = dates.max(dates.startOf(get(event, startAccessor), 'day'), first);
-  let end = dates.min(dates.ceil(get(event, endAccessor), 'day'), last)
+function eventSegments(event, first, last, _ref) {
+  var startAccessor = _ref.startAccessor,
+      endAccessor = _ref.endAccessor;
 
-  let padding = dates.diff(first, start, 'day');
-  let span = dates.diff(start, end, 'day');
+  var slots = _dates2.default.diff(first, last, 'day');
+  var start = _dates2.default.max(_dates2.default.startOf((0, _accessors.accessor)(event, startAccessor), 'day'), first);
+  var end = _dates2.default.min(_dates2.default.ceil((0, _accessors.accessor)(event, endAccessor), 'day'), last);
 
-  span = Math.min(span, slots)
+  var padding = _dates2.default.diff(first, start, 'day');
+  var span = _dates2.default.diff(start, end, 'day');
+
+  span = Math.min(span, slots);
   span = Math.max(span, 1);
 
   return {
-    event,
-    span,
+    event: event,
+    span: span,
     left: padding + 1,
     right: Math.max(padding + span, 1)
-  }
+  };
 }
 
-
-export function segStyle(span, slots){
-  let per = (span / slots) * 100 + '%';
-  return { flexBasis: per, maxWidth: per } // IE10/11 need max-width. flex-basis doesn't respect box-sizing
+function segStyle(span, slots) {
+  var per = span / slots * 100 + '%';
+  return { flexBasis: per, maxWidth: per }; // IE10/11 need max-width. flex-basis doesn't respect box-sizing
 }
 
-export function eventLevels(rowSegments, limit = Infinity){
-  let i, j, seg
-    , levels = []
-    , extra = [];
+function eventLevels(rowSegments) {
+  var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Infinity;
+
+  var i = void 0,
+      j = void 0,
+      seg = void 0,
+      levels = [],
+      extra = [];
 
   for (i = 0; i < rowSegments.length; i++) {
     seg = rowSegments[i];
 
-    for (j = 0; j < levels.length; j++)
-      if (!segsOverlap(seg, levels[j]))
-        break
-
-    if (j >= limit) {
-      extra.push(seg)
-    }
-    else {
+    for (j = 0; j < levels.length; j++) {
+      if (!segsOverlap(seg, levels[j])) break;
+    }if (j >= limit) {
+      extra.push(seg);
+    } else {
       (levels[j] || (levels[j] = [])).push(seg);
     }
   }
 
   for (i = 0; i < levels.length; i++) {
-    levels[i].sort((a, b) => a.left - b.left); //eslint-disable-line
+    levels[i].sort(function (a, b) {
+      return a.left - b.left;
+    }); //eslint-disable-line
   }
 
-  return { levels, extra };
+  return { levels: levels, extra: extra };
 }
 
-export function inRange(e, start, end, { startAccessor, endAccessor }){
-  let eStart = dates.startOf(get(e, startAccessor), 'day')
-  let eEnd = get(e, endAccessor)
+function inRange(e, start, end, _ref2) {
+  var startAccessor = _ref2.startAccessor,
+      endAccessor = _ref2.endAccessor;
 
-  let startsBeforeEnd = dates.lte(eStart, end, 'day')
-  let endsAfterStart = dates.gte(eEnd, start, 'day')
+  var eStart = _dates2.default.startOf((0, _accessors.accessor)(e, startAccessor), 'day');
+  var eEnd = (0, _accessors.accessor)(e, endAccessor);
 
-  return startsBeforeEnd && endsAfterStart
+  var startsBeforeEnd = _dates2.default.lte(eStart, end, 'day');
+  var endsAfterStart = _dates2.default.gte(eEnd, start, 'day');
+
+  return startsBeforeEnd && endsAfterStart;
 }
 
-
-export function segsOverlap(seg, otherSegs) {
-  return otherSegs.some(
-    otherSeg => otherSeg.left <= seg.right && otherSeg.right >= seg.left)
+function segsOverlap(seg, otherSegs) {
+  return otherSegs.some(function (otherSeg) {
+    return otherSeg.left <= seg.right && otherSeg.right >= seg.left;
+  });
 }
 
+function sortEvents(evtA, evtB, _ref3) {
+  var startAccessor = _ref3.startAccessor,
+      endAccessor = _ref3.endAccessor,
+      allDayAccessor = _ref3.allDayAccessor;
 
-export function sortEvents(evtA, evtB, { startAccessor, endAccessor, allDayAccessor }) {
-  let startSort = +dates.startOf(get(evtA, startAccessor), 'day') - +dates.startOf(get(evtB, startAccessor), 'day')
+  var startSort = +_dates2.default.startOf((0, _accessors.accessor)(evtA, startAccessor), 'day') - +_dates2.default.startOf((0, _accessors.accessor)(evtB, startAccessor), 'day');
 
-  let durA = dates.diff(
-        get(evtA, startAccessor)
-      , dates.ceil(get(evtA, endAccessor), 'day')
-      , 'day');
+  var durA = _dates2.default.diff((0, _accessors.accessor)(evtA, startAccessor), _dates2.default.ceil((0, _accessors.accessor)(evtA, endAccessor), 'day'), 'day');
 
-  let durB = dates.diff(
-        get(evtB, startAccessor)
-      , dates.ceil(get(evtB, endAccessor), 'day')
-      , 'day');
+  var durB = _dates2.default.diff((0, _accessors.accessor)(evtB, startAccessor), _dates2.default.ceil((0, _accessors.accessor)(evtB, endAccessor), 'day'), 'day');
 
   return startSort // sort by start Day first
-    || Math.max(durB, 1) - Math.max(durA, 1) // events spanning multiple days go first
-    || !!get(evtB, allDayAccessor) - !!get(evtA, allDayAccessor) // then allDay single day events
-    || +get(evtA, startAccessor) - +get(evtB, startAccessor)     // then sort by start time
+  || Math.max(durB, 1) - Math.max(durA, 1) // events spanning multiple days go first
+  || !!(0, _accessors.accessor)(evtB, allDayAccessor) - !!(0, _accessors.accessor)(evtA, allDayAccessor) // then allDay single day events
+  || +(0, _accessors.accessor)(evtA, startAccessor) - +(0, _accessors.accessor)(evtB, startAccessor); // then sort by start time
 }

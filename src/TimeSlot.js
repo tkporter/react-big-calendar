@@ -1,42 +1,71 @@
-import React, { PropTypes, Component } from 'react'
-import cn from 'classnames'
-import { elementType } from './utils/propTypes'
+'use strict';
 
+exports.__esModule = true;
 
-export default class TimeSlot extends Component {
-  static propTypes = {
-    dayWrapperComponent: elementType,
-    value: PropTypes.instanceOf(Date).isRequired,
-    isNow: PropTypes.bool,
-    showLabel: PropTypes.bool,
-    content: PropTypes.string,
-    culture: PropTypes.string
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _propTypes = require('./utils/propTypes');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TimeSlot = function (_Component) {
+  _inherits(TimeSlot, _Component);
+
+  function TimeSlot() {
+    _classCallCheck(this, TimeSlot);
+
+    return _possibleConstructorReturn(this, _Component.apply(this, arguments));
   }
 
-  static defaultProps = {
-    isNow: false,
-    showLabel: false,
-    content: ''
-  }
+  TimeSlot.prototype.render = function render() {
+    var value = this.props.value;
 
-  render() {
-    const { value } = this.props;
-    const Wrapper = this.props.dayWrapperComponent;
+    var Wrapper = this.props.dayWrapperComponent;
 
-    return (
-      <Wrapper value={value}>
-        <div
-          className={cn(
-            'rbc-time-slot',
-            this.props.showLabel && 'rbc-label',
-            this.props.isNow && 'rbc-now',
-          )}
-        >
-        {this.props.showLabel &&
-          <span>{this.props.content}</span>
-        }
-        </div>
-      </Wrapper>
-    )
-  }
-}
+    return _react2.default.createElement(
+      Wrapper,
+      { value: value },
+      _react2.default.createElement(
+        'div',
+        {
+          className: (0, _classnames2.default)('rbc-time-slot', this.props.showLabel && 'rbc-label', this.props.isNow && 'rbc-now')
+        },
+        this.props.showLabel && _react2.default.createElement(
+          'span',
+          null,
+          this.props.content
+        )
+      )
+    );
+  };
+
+  return TimeSlot;
+}(_react.Component);
+
+TimeSlot.propTypes = {
+  dayWrapperComponent: _propTypes.elementType,
+  value: _react.PropTypes.instanceOf(Date).isRequired,
+  isNow: _react.PropTypes.bool,
+  showLabel: _react.PropTypes.bool,
+  content: _react.PropTypes.string,
+  culture: _react.PropTypes.string
+};
+TimeSlot.defaultProps = {
+  isNow: false,
+  showLabel: false,
+  content: ''
+};
+exports.default = TimeSlot;
+module.exports = exports['default'];

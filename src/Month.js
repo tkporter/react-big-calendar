@@ -1,370 +1,424 @@
-import React from 'react';
-import { findDOMNode } from 'react-dom';
-import cn from 'classnames';
+'use strict';
 
-import dates from './utils/dates';
-import localizer from './localizer'
-import chunk from 'lodash/chunk';
+exports.__esModule = true;
 
-import { navigate, views } from './utils/constants';
-import { notify } from './utils/helpers';
-import getPosition from 'dom-helpers/query/position';
-import raf from 'dom-helpers/util/requestAnimationFrame';
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-import Popup from './Popup';
-import Overlay from 'react-overlays/lib/Overlay';
-import DateContentRow from './DateContentRow';
-import Header from './Header';
+var _react = require('react');
 
-import { accessor, dateFormat } from './utils/propTypes';
-import { segStyle, inRange, sortEvents } from './utils/eventLevels';
+var _react2 = _interopRequireDefault(_react);
 
-let eventsForWeek = (evts, start, end, props) =>
-  evts.filter(e => inRange(e, start, end, props));
+var _reactDom = require('react-dom');
 
+var _classnames = require('classnames');
 
-let propTypes = {
-  events: React.PropTypes.array.isRequired,
-  date: React.PropTypes.instanceOf(Date),
+var _classnames2 = _interopRequireDefault(_classnames);
 
-  min: React.PropTypes.instanceOf(Date),
-  max: React.PropTypes.instanceOf(Date),
+var _dates = require('./utils/dates');
 
-  step: React.PropTypes.number,
-  now: React.PropTypes.instanceOf(Date),
+var _dates2 = _interopRequireDefault(_dates);
 
-  scrollToTime: React.PropTypes.instanceOf(Date),
-  eventPropGetter: React.PropTypes.func,
+var _localizer = require('./localizer');
 
-  culture: React.PropTypes.string,
-  dayFormat: dateFormat,
+var _localizer2 = _interopRequireDefault(_localizer);
 
-  rtl: React.PropTypes.bool,
-  width: React.PropTypes.number,
+var _chunk = require('lodash/chunk');
 
-  titleAccessor: accessor.isRequired,
-  allDayAccessor: accessor.isRequired,
-  startAccessor: accessor.isRequired,
-  endAccessor: accessor.isRequired,
+var _chunk2 = _interopRequireDefault(_chunk);
 
-  selected: React.PropTypes.object,
-  selectable: React.PropTypes.oneOf([true, false, 'ignoreEvents']),
+var _constants = require('./utils/constants');
 
-  onNavigate: React.PropTypes.func,
-  onSelectSlot: React.PropTypes.func,
-  onSelectEvent: React.PropTypes.func,
-  onShowMore: React.PropTypes.func,
-  onDrillDown: React.PropTypes.func,
-  getDrilldownView: React.PropTypes.func.isRequired,
+var _helpers = require('./utils/helpers');
 
-  dateFormat,
+var _position = require('dom-helpers/query/position');
 
-  weekdayFormat: dateFormat,
-  popup: React.PropTypes.bool,
+var _position2 = _interopRequireDefault(_position);
 
-  messages: React.PropTypes.object,
-  components: React.PropTypes.object.isRequired,
-  popupOffset: React.PropTypes.oneOfType([
-    React.PropTypes.number,
-    React.PropTypes.shape({
-      x: React.PropTypes.number,
-      y: React.PropTypes.number
-    })
-  ]),
+var _requestAnimationFrame = require('dom-helpers/util/requestAnimationFrame');
+
+var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
+
+var _Popup = require('./Popup');
+
+var _Popup2 = _interopRequireDefault(_Popup);
+
+var _Overlay = require('react-overlays/lib/Overlay');
+
+var _Overlay2 = _interopRequireDefault(_Overlay);
+
+var _DateContentRow = require('./DateContentRow');
+
+var _DateContentRow2 = _interopRequireDefault(_DateContentRow);
+
+var _Header = require('./Header');
+
+var _Header2 = _interopRequireDefault(_Header);
+
+var _propTypes = require('./utils/propTypes');
+
+var _eventLevels = require('./utils/eventLevels');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+var eventsForWeek = function eventsForWeek(evts, start, end, props) {
+  return evts.filter(function (e) {
+    return (0, _eventLevels.inRange)(e, start, end, props);
+  });
 };
 
-let MonthView = React.createClass({
+var propTypes = {
+  events: _react2.default.PropTypes.array.isRequired,
+  date: _react2.default.PropTypes.instanceOf(Date),
+
+  min: _react2.default.PropTypes.instanceOf(Date),
+  max: _react2.default.PropTypes.instanceOf(Date),
+
+  step: _react2.default.PropTypes.number,
+  now: _react2.default.PropTypes.instanceOf(Date),
+
+  scrollToTime: _react2.default.PropTypes.instanceOf(Date),
+  eventPropGetter: _react2.default.PropTypes.func,
+
+  culture: _react2.default.PropTypes.string,
+  dayFormat: _propTypes.dateFormat,
+
+  rtl: _react2.default.PropTypes.bool,
+  width: _react2.default.PropTypes.number,
+
+  titleAccessor: _propTypes.accessor.isRequired,
+  allDayAccessor: _propTypes.accessor.isRequired,
+  startAccessor: _propTypes.accessor.isRequired,
+  endAccessor: _propTypes.accessor.isRequired,
+
+  selected: _react2.default.PropTypes.object,
+  selectable: _react2.default.PropTypes.oneOf([true, false, 'ignoreEvents']),
+
+  onNavigate: _react2.default.PropTypes.func,
+  onSelectSlot: _react2.default.PropTypes.func,
+  onSelectEvent: _react2.default.PropTypes.func,
+  onShowMore: _react2.default.PropTypes.func,
+
+  dateFormat: _propTypes.dateFormat,
+
+  weekdayFormat: _propTypes.dateFormat,
+  popup: _react2.default.PropTypes.bool,
+
+  components: _react2.default.PropTypes.object.isRequired,
+  popupOffset: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number, _react2.default.PropTypes.shape({
+    x: _react2.default.PropTypes.number,
+    y: _react2.default.PropTypes.number
+  })])
+};
+
+var MonthView = _react2.default.createClass({
 
   displayName: 'MonthView',
 
-  propTypes,
+  propTypes: propTypes,
 
-  getInitialState(){
+  getInitialState: function getInitialState() {
     return {
       rowLimit: 5,
       needLimitMeasure: true
-    }
+    };
   },
-
-  componentWillMount() {
-    this._bgRows = []
-    this._pendingSelection = []
+  componentWillMount: function componentWillMount() {
+    this._bgRows = [];
+    this._pendingSelection = [];
   },
+  componentWillReceiveProps: function componentWillReceiveProps(_ref) {
+    var date = _ref.date;
 
-  componentWillReceiveProps({ date }) {
     this.setState({
-      needLimitMeasure: !dates.eq(date, this.props.date)
-    })
+      needLimitMeasure: !_dates2.default.eq(date, this.props.date)
+    });
   },
+  componentDidMount: function componentDidMount() {
+    var _this = this;
 
-  componentDidMount() {
-    let running;
+    var running = void 0;
 
-    if (this.state.needLimitMeasure)
-      this.measureRowLimit(this.props)
+    if (this.state.needLimitMeasure) this.measureRowLimit(this.props);
 
-    window.addEventListener('resize', this._resizeListener = ()=> {
+    window.addEventListener('resize', this._resizeListener = function () {
       if (!running) {
-        raf(()=> {
-          running = false
-          this.setState({ needLimitMeasure: true }) //eslint-disable-line
-        })
+        (0, _requestAnimationFrame2.default)(function () {
+          running = false;
+          _this.setState({ needLimitMeasure: true }); //eslint-disable-line
+        });
       }
-    }, false)
+    }, false);
   },
-
-  componentDidUpdate() {
-    if (this.state.needLimitMeasure)
-      this.measureRowLimit(this.props)
+  componentDidUpdate: function componentDidUpdate() {
+    if (this.state.needLimitMeasure) this.measureRowLimit(this.props);
   },
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this._resizeListener, false)
+  componentWillUnmount: function componentWillUnmount() {
+    window.removeEventListener('resize', this._resizeListener, false);
   },
-
-  getContainer() {
-    return findDOMNode(this)
+  getContainer: function getContainer() {
+    return (0, _reactDom.findDOMNode)(this);
   },
+  render: function render() {
+    var _this2 = this;
 
-  render() {
-    let { date, culture, weekdayFormat, className } = this.props
-      , month = dates.visibleDays(date, culture)
-      , weeks  = chunk(month, 7);
+    var _props = this.props,
+        date = _props.date,
+        culture = _props.culture,
+        weekdayFormat = _props.weekdayFormat,
+        className = _props.className,
+        month = _dates2.default.visibleDays(date, culture),
+        weeks = (0, _chunk2.default)(month, 7);
 
     this._weekCount = weeks.length;
 
-    return (
-      <div className={cn('rbc-month-view', className)}>
-        <div className='rbc-row rbc-month-header'>
-          {this._headers(weeks[0], weekdayFormat, culture)}
-        </div>
-        { weeks.map((week, idx) =>
-            this.renderWeek(week, idx))
+    return _react2.default.createElement(
+      'div',
+      { className: (0, _classnames2.default)('rbc-month-view', className) },
+      _react2.default.createElement(
+        'div',
+        { className: 'rbc-row rbc-month-header' },
+        this._headers(weeks[0], weekdayFormat, culture)
+      ),
+      weeks.map(function (week, idx) {
+        return _this2.renderWeek(week, idx);
+      }),
+      this.props.popup && this._renderOverlay()
+    );
+  },
+  renderWeek: function renderWeek(week, weekIdx) {
+    var _this3 = this;
+
+    var _props2 = this.props,
+        events = _props2.events,
+        components = _props2.components,
+        selectable = _props2.selectable,
+        titleAccessor = _props2.titleAccessor,
+        startAccessor = _props2.startAccessor,
+        endAccessor = _props2.endAccessor,
+        allDayAccessor = _props2.allDayAccessor,
+        eventPropGetter = _props2.eventPropGetter,
+        selected = _props2.selected;
+    var _state = this.state,
+        needLimitMeasure = _state.needLimitMeasure,
+        rowLimit = _state.rowLimit;
+
+
+    events = eventsForWeek(events, week[0], week[week.length - 1], this.props);
+    events.sort(function (a, b) {
+      return (0, _eventLevels.sortEvents)(a, b, _this3.props);
+    });
+
+    return _react2.default.createElement(_DateContentRow2.default, {
+      key: weekIdx,
+      ref: weekIdx === 0 ? 'slotRow' : undefined,
+      container: this.getContainer,
+      className: 'rbc-month-row',
+      range: week,
+      events: events,
+      maxRows: rowLimit,
+      selected: selected,
+      selectable: selectable,
+      selectedDate: _state.selectedDate,
+
+      titleAccessor: titleAccessor,
+      startAccessor: startAccessor,
+      endAccessor: endAccessor,
+      allDayAccessor: allDayAccessor,
+      eventPropGetter: eventPropGetter,
+
+      renderHeader: this.readerDateHeading,
+      renderForMeasure: needLimitMeasure,
+
+      onShowMore: this.handleShowMore,
+      onSelect: this.handleSelectEvent,
+      onSelectSlot: this.handleSelectSlot,
+
+      eventComponent: components.event,
+      eventWrapperComponent: components.eventWrapper,
+      dateCellWrapper: components.dateCellWrapper
+    });
+  },
+  readerDateHeading: function readerDateHeading(_ref2) {
+    var _this4 = this;
+
+    var date = _ref2.date,
+        className = _ref2.className,
+        props = _objectWithoutProperties(_ref2, ['date', 'className']);
+
+    var _props3 = this.props,
+        currentDate = _props3.date,
+        dateFormat = _props3.dateFormat,
+        culture = _props3.culture;
+
+
+    var isOffRange = _dates2.default.month(date) !== _dates2.default.month(currentDate);
+    var isCurrent = _dates2.default.eq(date, currentDate, 'day');
+
+    return _react2.default.createElement(
+      'div',
+      _extends({}, props, {
+        className: (0, _classnames2.default)(className, isOffRange && 'rbc-off-range', isCurrent && 'rbc-current')
+      }),
+      _react2.default.createElement(
+        'a',
+        { href: '#', onClick: function onClick(e) {
+            return _this4.handleHeadingClick(date, e);
+          } },
+        _localizer2.default.format(date, dateFormat, culture)
+      )
+    );
+  },
+  _headers: function _headers(row, format, culture) {
+    var first = row[0];
+    var last = row[row.length - 1];
+    var HeaderComponent = this.props.components.header || _Header2.default;
+
+    return _dates2.default.range(first, last, 'day').map(function (day, idx) {
+      return _react2.default.createElement(
+        'div',
+        {
+          key: 'header_' + idx,
+          className: 'rbc-header',
+          style: (0, _eventLevels.segStyle)(1, 7)
+        },
+        _react2.default.createElement(HeaderComponent, {
+          date: day,
+          label: _localizer2.default.format(day, format, culture),
+          localizer: _localizer2.default,
+          format: format,
+          culture: culture
+        })
+      );
+    });
+  },
+  _renderOverlay: function _renderOverlay() {
+    var _this5 = this;
+
+    var overlay = this.state && this.state.overlay || {};
+    var components = this.props.components;
+
+
+    return _react2.default.createElement(
+      _Overlay2.default,
+      {
+        rootClose: true,
+        placement: 'bottom',
+        container: this,
+        show: !!overlay.position,
+        onHide: function onHide() {
+          return _this5.setState({ overlay: null });
         }
-        { this.props.popup &&
-            this._renderOverlay()
-        }
-      </div>
-    )
+      },
+      _react2.default.createElement(_Popup2.default, _extends({}, this.props, {
+        eventComponent: components.event,
+        eventWrapperComponent: components.eventWrapper,
+        position: overlay.position,
+        events: overlay.events,
+        slotStart: overlay.date,
+        slotEnd: overlay.end,
+        onSelect: this.handleSelectEvent
+      }))
+    );
   },
-
-  renderWeek(week, weekIdx) {
-    let {
-      events,
-      components,
-      selectable,
-      titleAccessor,
-      startAccessor,
-      endAccessor,
-      allDayAccessor,
-      eventPropGetter,
-      messages,
-      selected } = this.props;
-
-    const { needLimitMeasure, rowLimit } = this.state;
-
-    events = eventsForWeek(events, week[0], week[week.length - 1], this.props)
-    events.sort((a, b) => sortEvents(a, b, this.props))
-
-    return (
-      <DateContentRow
-        key={weekIdx}
-        ref={weekIdx === 0
-          ? 'slotRow' : undefined
-        }
-        container={this.getContainer}
-        className='rbc-month-row'
-        range={week}
-        events={events}
-        maxRows={rowLimit}
-        selected={selected}
-        selectable={selectable}
-        messages={messages}
-
-        titleAccessor={titleAccessor}
-        startAccessor={startAccessor}
-        endAccessor={endAccessor}
-        allDayAccessor={allDayAccessor}
-        eventPropGetter={eventPropGetter}
-
-        renderHeader={this.readerDateHeading}
-        renderForMeasure={needLimitMeasure}
-
-        onShowMore={this.handleShowMore}
-        onSelect={this.handleSelectEvent}
-        onSelectSlot={this.handleSelectSlot}
-
-        eventComponent={components.event}
-        eventWrapperComponent={components.eventWrapper}
-        dateCellWrapper={components.dateCellWrapper}
-      />
-    )
-  },
-
-  readerDateHeading({ date, className, ...props }) {
-    let { date: currentDate, getDrilldownView, dateFormat, culture  } = this.props;
-
-    let isOffRange = dates.month(date) !== dates.month(currentDate);
-    let isCurrent = dates.eq(date, currentDate, 'day');
-    let drilldownView = getDrilldownView(date);
-    let label = localizer.format(date, dateFormat, culture);
-
-    return (
-      <div
-        {...props}
-        className={cn(
-          className,
-          isOffRange && 'rbc-off-range',
-          isCurrent && 'rbc-current'
-        )}
-      >
-        {drilldownView ? (
-          <a
-            href='#'
-            onClick={e => this.handleHeadingClick(date, drilldownView, e)}
-          >
-            {label}
-          </a>
-        ) : (
-          <span>
-            {label}
-          </span>
-        )}
-      </div>
-    )
-  },
-
-  _headers(row, format, culture) {
-    let first = row[0]
-    let last = row[row.length - 1]
-    let HeaderComponent = this.props.components.header || Header
-
-    return dates.range(first, last, 'day').map((day, idx) =>
-      <div
-        key={'header_' + idx}
-        className='rbc-header'
-        style={segStyle(1, 7)}
-      >
-        <HeaderComponent
-          date={day}
-          label={localizer.format(day, format, culture)}
-          localizer={localizer}
-          format={format}
-          culture={culture}
-        />
-      </div>
-    )
-  },
-
-  _renderOverlay() {
-    let overlay = (this.state && this.state.overlay) || {};
-    let { components } = this.props;
-
-    return (
-      <Overlay
-        rootClose
-        placement='bottom'
-        container={this}
-        show={!!overlay.position}
-        onHide={() => this.setState({ overlay: null })}
-      >
-        <Popup
-          {...this.props}
-          eventComponent={components.event}
-          eventWrapperComponent={components.eventWrapper}
-          position={overlay.position}
-          events={overlay.events}
-          slotStart={overlay.date}
-          slotEnd={overlay.end}
-          onSelect={this.handleSelectEvent}
-        />
-      </Overlay>
-    )
-  },
-
-  measureRowLimit() {
+  measureRowLimit: function measureRowLimit() {
     this.setState({
       needLimitMeasure: false,
-      rowLimit: this.refs.slotRow.getRowLimit(),
-    })
+      rowLimit: this.refs.slotRow.getRowLimit()
+    });
   },
+  handleSelectSlot: function handleSelectSlot(range) {
+    var _this6 = this;
 
-  handleSelectSlot(range) {
-    this._pendingSelection = this._pendingSelection
-      .concat(range)
+    this._pendingSelection = this._pendingSelection.concat(range);
 
-    clearTimeout(this._selectTimer)
-    this._selectTimer = setTimeout(()=> this._selectDates())
+    clearTimeout(this._selectTimer);
+    this._selectTimer = setTimeout(function () {
+      return _this6._selectDates();
+    });
   },
-
-  handleHeadingClick(date, view, e){
+  handleHeadingClick: function handleHeadingClick(date, e) {
     e.preventDefault();
-    this.clearSelection()
-    notify(this.props.onDrillDown, [date, view])
+    this.clearSelection();
+    (0, _helpers.notify)(this.props.onNavigate, [_constants.navigate.DATE, date]);
   },
+  handleSelectEvent: function handleSelectEvent() {
+    this.clearSelection();
 
-  handleSelectEvent(...args){
-    this.clearSelection()
-    notify(this.props.onSelectEvent, args)
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    (0, _helpers.notify)(this.props.onSelectEvent, args);
   },
+  _selectDates: function _selectDates() {
+    var slots = this._pendingSelection.slice();
 
-  _selectDates() {
-    let slots = this._pendingSelection.slice()
+    this._pendingSelection = [];
 
-    this._pendingSelection = []
+    slots.sort(function (a, b) {
+      return +a - +b;
+    });
 
-    slots.sort((a, b) => +a - +b)
 
-    notify(this.props.onSelectSlot, {
-      slots,
+    this.setState({
+      selectedDate: slots[0]
+    });
+
+    (0, _helpers.notify)(this.props.onSelectSlot, {
+      slots: slots,
       start: slots[0],
       end: slots[slots.length - 1]
-    })
+    });
   },
-
-  handleShowMore(events, date, cell, slot) {
-    const { popup, onDrillDown, onShowMore, getDrilldownView } = this.props
+  handleShowMore: function handleShowMore(events, date, cell, slot) {
+    var _props4 = this.props,
+        popup = _props4.popup,
+        onNavigate = _props4.onNavigate,
+        onShowMore = _props4.onShowMore;
     //cancel any pending selections so only the event click goes through.
-    this.clearSelection()
+
+    this.clearSelection();
 
     if (popup) {
-      let position = getPosition(cell, findDOMNode(this));
+      var position = (0, _position2.default)(cell, (0, _reactDom.findDOMNode)(this));
 
       this.setState({
-        overlay: { date, events, position }
-      })
-    }
-    else {
-      notify(onDrillDown, [date, getDrilldownView(date) || views.DAY])
+        overlay: { date: date, events: events, position: position }
+      });
+    } else {
+      (0, _helpers.notify)(onNavigate, [_constants.navigate.DATE, date]);
     }
 
-    notify(onShowMore, [events, date, slot])
+    (0, _helpers.notify)(onShowMore, [events, date, slot]);
   },
-
-  clearSelection(){
-    clearTimeout(this._selectTimer)
+  clearSelection: function clearSelection() {
+    clearTimeout(this._selectTimer);
     this._pendingSelection = [];
   }
-
 });
 
-MonthView.navigate = (date, action)=> {
-  switch (action){
-    case navigate.PREVIOUS:
-      return dates.add(date, -1, 'month');
+MonthView.navigate = function (date, action) {
+  switch (action) {
+    case _constants.navigate.PREVIOUS:
+      return _dates2.default.add(date, -1, 'month');
 
-    case navigate.NEXT:
-      return dates.add(date, 1, 'month')
+    case _constants.navigate.NEXT:
+      return _dates2.default.add(date, 1, 'month');
 
     default:
       return date;
   }
-}
+};
 
-MonthView.range = (date, { culture }) => {
-  let start = dates.firstVisibleDay(date, culture)
-  let end = dates.lastVisibleDay(date, culture)
-  return { start, end }
-}
+MonthView.range = function (date, _ref3) {
+  var culture = _ref3.culture;
 
-export default MonthView
+  var start = _dates2.default.firstVisibleDay(date, culture);
+  var end = _dates2.default.lastVisibleDay(date, culture);
+  return { start: start, end: end };
+};
+
+exports.default = MonthView;
+module.exports = exports['default'];

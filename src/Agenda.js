@@ -1,219 +1,275 @@
-import React, { PropTypes } from 'react';
-import classes from 'dom-helpers/class';
-import getWidth from 'dom-helpers/query/width';
-import scrollbarSize from 'dom-helpers/util/scrollbarSize';
+'use strict';
 
-import localizer from './localizer'
-import message from './utils/messages';
-import dates from './utils/dates';
-import { navigate } from './utils/constants';
-import { accessor as get } from './utils/accessors';
-import { accessor, dateFormat, dateRangeFormat } from './utils/propTypes';
-import { inRange } from './utils/eventLevels';
+exports.__esModule = true;
 
+var _react = require('react');
 
-let Agenda = React.createClass({
+var _react2 = _interopRequireDefault(_react);
+
+var _class = require('dom-helpers/class');
+
+var _class2 = _interopRequireDefault(_class);
+
+var _width = require('dom-helpers/query/width');
+
+var _width2 = _interopRequireDefault(_width);
+
+var _scrollbarSize = require('dom-helpers/util/scrollbarSize');
+
+var _scrollbarSize2 = _interopRequireDefault(_scrollbarSize);
+
+var _localizer = require('./localizer');
+
+var _localizer2 = _interopRequireDefault(_localizer);
+
+var _messages = require('./utils/messages');
+
+var _messages2 = _interopRequireDefault(_messages);
+
+var _dates = require('./utils/dates');
+
+var _dates2 = _interopRequireDefault(_dates);
+
+var _constants = require('./utils/constants');
+
+var _accessors = require('./utils/accessors');
+
+var _propTypes = require('./utils/propTypes');
+
+var _eventLevels = require('./utils/eventLevels');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Agenda = _react2.default.createClass({
+  displayName: 'Agenda',
+
 
   propTypes: {
-    events: React.PropTypes.array,
-    date: React.PropTypes.instanceOf(Date),
-    length: React.PropTypes.number.isRequired,
-    titleAccessor: accessor.isRequired,
-    allDayAccessor: accessor.isRequired,
-    startAccessor: accessor.isRequired,
-    endAccessor: accessor.isRequired,
+    events: _react2.default.PropTypes.array,
+    date: _react2.default.PropTypes.instanceOf(Date),
+    length: _react2.default.PropTypes.number.isRequired,
+    titleAccessor: _propTypes.accessor.isRequired,
+    allDayAccessor: _propTypes.accessor.isRequired,
+    startAccessor: _propTypes.accessor.isRequired,
+    endAccessor: _propTypes.accessor.isRequired,
 
-    agendaDateFormat: dateFormat,
-    agendaTimeFormat: dateFormat,
-    agendaTimeRangeFormat: dateRangeFormat,
-    culture: React.PropTypes.string,
+    agendaDateFormat: _propTypes.dateFormat,
+    agendaTimeFormat: _propTypes.dateFormat,
+    agendaTimeRangeFormat: _propTypes.dateRangeFormat,
+    culture: _react2.default.PropTypes.string,
 
-    components: React.PropTypes.object.isRequired,
-    messages: PropTypes.shape({
-      date: PropTypes.string,
-      time: PropTypes.string,
+    components: _react2.default.PropTypes.object.isRequired,
+    messages: _react.PropTypes.shape({
+      date: _react.PropTypes.string,
+      time: _react.PropTypes.string
     })
   },
 
-  getDefaultProps() {
+  getDefaultProps: function getDefaultProps() {
     return {
       length: 30
     };
   },
-
-  componentDidMount() {
-    this._adjustHeader()
+  componentDidMount: function componentDidMount() {
+    this._adjustHeader();
   },
-
-  componentDidUpdate() {
-    this._adjustHeader()
+  componentDidUpdate: function componentDidUpdate() {
+    this._adjustHeader();
   },
+  render: function render() {
+    var _this = this;
 
-  render() {
-    let { length, date, events, startAccessor } = this.props;
-    let messages = message(this.props.messages);
-    let end = dates.add(date, length, 'day')
+    var _props = this.props,
+        length = _props.length,
+        date = _props.date,
+        events = _props.events,
+        startAccessor = _props.startAccessor;
 
-    let range = dates.range(date, end, 'day');
+    var messages = (0, _messages2.default)(this.props.messages);
+    var end = _dates2.default.add(date, length, 'day');
 
-    events = events.filter(event =>
-      inRange(event, date, end, this.props)
-    )
+    var range = _dates2.default.range(date, end, 'day');
 
-    events.sort((a, b) => +get(a, startAccessor) - +get(b, startAccessor))
+    events = events.filter(function (event) {
+      return (0, _eventLevels.inRange)(event, date, end, _this.props);
+    });
 
-    return (
-      <div className='rbc-agenda-view'>
-        <table ref='header'>
-          <thead>
-            <tr>
-              <th className='rbc-header' ref='dateCol'>
-                {messages.date}
-              </th>
-              <th className='rbc-header' ref='timeCol'>
-                {messages.time}
-              </th>
-              <th className='rbc-header'>
-                {messages.event}
-              </th>
-            </tr>
-          </thead>
-        </table>
-        <div className='rbc-agenda-content' ref='content'>
-          <table>
-            <tbody ref='tbody'>
-              { range.map((day, idx) => this.renderDay(day, events, idx)) }
-            </tbody>
-          </table>
-        </div>
-      </div>
+    events.sort(function (a, b) {
+      return +(0, _accessors.accessor)(a, startAccessor) - +(0, _accessors.accessor)(b, startAccessor);
+    });
+
+    return _react2.default.createElement(
+      'div',
+      { className: 'rbc-agenda-view' },
+      _react2.default.createElement(
+        'table',
+        { ref: 'header' },
+        _react2.default.createElement(
+          'thead',
+          null,
+          _react2.default.createElement(
+            'tr',
+            null,
+            _react2.default.createElement(
+              'th',
+              { className: 'rbc-header', ref: 'dateCol' },
+              messages.date
+            ),
+            _react2.default.createElement(
+              'th',
+              { className: 'rbc-header', ref: 'timeCol' },
+              messages.time
+            ),
+            _react2.default.createElement(
+              'th',
+              { className: 'rbc-header' },
+              messages.event
+            )
+          )
+        )
+      ),
+      _react2.default.createElement(
+        'div',
+        { className: 'rbc-agenda-content', ref: 'content' },
+        _react2.default.createElement(
+          'table',
+          null,
+          _react2.default.createElement(
+            'tbody',
+            { ref: 'tbody' },
+            range.map(function (day, idx) {
+              return _this.renderDay(day, events, idx);
+            })
+          )
+        )
+      )
     );
   },
+  renderDay: function renderDay(day, events, dayKey) {
+    var _this2 = this;
 
-  renderDay(day, events, dayKey){
-    let {
-        culture, components
-      , titleAccessor, agendaDateFormat } = this.props;
+    var _props2 = this.props,
+        culture = _props2.culture,
+        components = _props2.components,
+        titleAccessor = _props2.titleAccessor,
+        agendaDateFormat = _props2.agendaDateFormat;
 
-    let EventComponent = components.event;
-    let DateComponent = components.date;
 
-    events = events.filter(e => inRange(e, day, day, this.props))
+    var EventComponent = components.event;
+    var DateComponent = components.date;
 
-    return events.map((event, idx) => {
-      let dateLabel = idx === 0 && localizer.format(day, agendaDateFormat, culture)
-      let first = idx === 0
-          ? (
-            <td rowSpan={events.length} className='rbc-agenda-date-cell'>
-              { DateComponent
-                ? <DateComponent day={day} label={dateLabel}/>
-                : dateLabel
-              }
-            </td>
-          ) : false
+    events = events.filter(function (e) {
+      return (0, _eventLevels.inRange)(e, day, day, _this2.props);
+    });
 
-      let title = get(event, titleAccessor)
+    return events.map(function (event, idx) {
+      var dateLabel = idx === 0 && _localizer2.default.format(day, agendaDateFormat, culture);
+      var first = idx === 0 ? _react2.default.createElement(
+        'td',
+        { rowSpan: events.length, className: 'rbc-agenda-date-cell' },
+        DateComponent ? _react2.default.createElement(DateComponent, { day: day, label: dateLabel }) : dateLabel
+      ) : false;
 
-      return (
-        <tr key={dayKey + '_' + idx}>
-          {first}
-          <td className='rbc-agenda-time-cell'>
-            { this.timeRangeLabel(day, event) }
-          </td>
-          <td className='rbc-agenda-event-cell'>
-            { EventComponent
-                ? <EventComponent event={event} title={title}/>
-                : title
-            }
-          </td>
-        </tr>
-      )
-    }, [])
+      var title = (0, _accessors.accessor)(event, titleAccessor);
+
+      return _react2.default.createElement(
+        'tr',
+        { key: dayKey + '_' + idx },
+        first,
+        _react2.default.createElement(
+          'td',
+          { className: 'rbc-agenda-time-cell' },
+          _this2.timeRangeLabel(day, event)
+        ),
+        _react2.default.createElement(
+          'td',
+          { className: 'rbc-agenda-event-cell' },
+          EventComponent ? _react2.default.createElement(EventComponent, { event: event, title: title }) : title
+        )
+      );
+    }, []);
   },
+  timeRangeLabel: function timeRangeLabel(day, event) {
+    var _props3 = this.props,
+        endAccessor = _props3.endAccessor,
+        startAccessor = _props3.startAccessor,
+        allDayAccessor = _props3.allDayAccessor,
+        culture = _props3.culture,
+        messages = _props3.messages,
+        components = _props3.components;
 
-  timeRangeLabel(day, event){
-    let {
-        endAccessor, startAccessor, allDayAccessor
-      , culture, messages, components } = this.props;
 
-    let labelClass = ''
-      , TimeComponent = components.time
-      , label = message(messages).allDay
+    var labelClass = '',
+        TimeComponent = components.time,
+        label = (0, _messages2.default)(messages).allDay;
 
-    let start = get(event, startAccessor)
-    let end = get(event, endAccessor)
+    var start = (0, _accessors.accessor)(event, startAccessor);
+    var end = (0, _accessors.accessor)(event, endAccessor);
 
-    if (!get(event, allDayAccessor)) {
-      if (dates.eq(start, end, 'day')){
-        label = localizer.format({ start, end }, this.props.agendaTimeRangeFormat, culture)
-      }
-      else if (dates.eq(day, start, 'day')){
-        label = localizer.format(start, this.props.agendaTimeFormat, culture)
-      }
-      else if (dates.eq(day, end, 'day')){
-        label = localizer.format(end, this.props.agendaTimeFormat, culture)
+    if (!(0, _accessors.accessor)(event, allDayAccessor)) {
+      if (_dates2.default.eq(start, end, 'day')) {
+        label = _localizer2.default.format({ start: start, end: end }, this.props.agendaTimeRangeFormat, culture);
+      } else if (_dates2.default.eq(day, start, 'day')) {
+        label = _localizer2.default.format(start, this.props.agendaTimeFormat, culture);
+      } else if (_dates2.default.eq(day, end, 'day')) {
+        label = _localizer2.default.format(end, this.props.agendaTimeFormat, culture);
       }
     }
 
-    if (dates.gt(day, start, 'day')) labelClass = 'rbc-continues-prior'
-    if (dates.lt(day, end, 'day'))   labelClass += ' rbc-continues-after'
+    if (_dates2.default.gt(day, start, 'day')) labelClass = 'rbc-continues-prior';
+    if (_dates2.default.lt(day, end, 'day')) labelClass += ' rbc-continues-after';
 
-    return (
-      <span className={labelClass.trim()}>
-        { TimeComponent
-          ? <TimeComponent event={event} label={label}/>
-          : label
-        }
-      </span>
-    )
+    return _react2.default.createElement(
+      'span',
+      { className: labelClass.trim() },
+      TimeComponent ? _react2.default.createElement(TimeComponent, { event: event, label: label }) : label
+    );
   },
+  _adjustHeader: function _adjustHeader() {
+    var header = this.refs.header;
+    var firstRow = this.refs.tbody.firstChild;
 
-  _adjustHeader() {
-    let header = this.refs.header;
-    let firstRow = this.refs.tbody.firstChild
+    if (!firstRow) return;
 
-    if (!firstRow)
-      return
+    var isOverflowing = this.refs.content.scrollHeight > this.refs.content.clientHeight;
+    var widths = this._widths || [];
 
-    let isOverflowing = this.refs.content.scrollHeight > this.refs.content.clientHeight;
-    let widths = this._widths || []
-
-    this._widths = [
-      getWidth(firstRow.children[0]),
-      getWidth(firstRow.children[1])
-    ]
+    this._widths = [(0, _width2.default)(firstRow.children[0]), (0, _width2.default)(firstRow.children[1])];
 
     if (widths[0] !== this._widths[0] || widths[1] !== this._widths[1]) {
-      this.refs.dateCol.style.width = this._widths[0] + 'px'
+      this.refs.dateCol.style.width = this._widths[0] + 'px';
       this.refs.timeCol.style.width = this._widths[1] + 'px';
     }
 
     if (isOverflowing) {
-      classes.addClass(header, 'rbc-header-overflowing')
-      header.style.marginRight = scrollbarSize() + 'px'
-    }
-    else {
-      classes.removeClass(header, 'rbc-header-overflowing')
+      _class2.default.addClass(header, 'rbc-header-overflowing');
+      header.style.marginRight = (0, _scrollbarSize2.default)() + 'px';
+    } else {
+      _class2.default.removeClass(header, 'rbc-header-overflowing');
     }
   }
 });
 
-Agenda.navigate = (date, action)=>{
-  switch (action){
-    case navigate.PREVIOUS:
-      return dates.add(date, -1, 'day');
+Agenda.navigate = function (date, action) {
+  switch (action) {
+    case _constants.navigate.PREVIOUS:
+      return _dates2.default.add(date, -1, 'day');
 
-    case navigate.NEXT:
-      return dates.add(date, 1, 'day')
+    case _constants.navigate.NEXT:
+      return _dates2.default.add(date, 1, 'day');
 
     default:
       return date;
   }
-}
+};
 
-Agenda.range = (start, { length = Agenda.defaultProps.length }) => {
-  let end = dates.add(start, length, 'day')
-  return { start, end }
-}
+Agenda.range = function (start, _ref) {
+  var _ref$length = _ref.length,
+      length = _ref$length === undefined ? Agenda.defaultProps.length : _ref$length;
 
-export default Agenda
+  var end = _dates2.default.add(start, length, 'day');
+  return { start: start, end: end };
+};
+
+exports.default = Agenda;
+module.exports = exports['default'];

@@ -1,91 +1,131 @@
-import React from 'react'
-import { DragDropContext } from 'react-dnd'
-import cn from 'classnames';
+'use strict';
 
-import DraggableEventWrapper from './DraggableEventWrapper'
-import { DayWrapper, DateCellWrapper } from './backgroundWrapper'
+exports.__esModule = true;
 
-let html5Backend;
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.default = withDragAndDrop;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDnd = require('react-dnd');
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _DraggableEventWrapper = require('./DraggableEventWrapper');
+
+var _DraggableEventWrapper2 = _interopRequireDefault(_DraggableEventWrapper);
+
+var _backgroundWrapper = require('./backgroundWrapper');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var html5Backend = void 0;
 
 try {
-  html5Backend = require('react-dnd-html5-backend')
-} catch (err) { /* optional dep missing */}
+  html5Backend = require('react-dnd-html5-backend');
+} catch (err) {/* optional dep missing */}
 
+function withDragAndDrop(Calendar) {
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      _ref$backend = _ref.backend,
+      backend = _ref$backend === undefined ? html5Backend : _ref$backend;
 
-export default function withDragAndDrop(Calendar, {
-  backend = html5Backend
-} = {}) {
+  var DragAndDropCalendar = function (_React$Component) {
+    _inherits(DragAndDropCalendar, _React$Component);
 
-  class DragAndDropCalendar extends React.Component {
-    static propTypes = {
-      selectable: React.PropTypes.oneOf([true, false, 'ignoreEvents']).isRequired,
-      components: React.PropTypes.object,
-    }
-    getChildContext () {
-      return { onEventDrop: this.props.onEventDrop }
-    }
+    DragAndDropCalendar.prototype.getChildContext = function getChildContext() {
+      return { onEventDrop: this.props.onEventDrop };
+    };
 
-    constructor(...args) {
-      super(...args);
-      this.state = { isDragging: false };
-    }
+    function DragAndDropCalendar() {
+      _classCallCheck(this, DragAndDropCalendar);
 
-    componentWillMount() {
-      let monitor = this.context.dragDropManager.getMonitor()
-      this.monitor = monitor
-      this.unsubscribeToStateChange = monitor
-        .subscribeToStateChange(this.handleStateChange)
-    }
-
-    componentWillUnmount() {
-      this.monitor = null
-      this.unsubscribeToStateChange()
-    }
-
-    handleStateChange = () => {
-      const isDragging = !!this.monitor.getItem();
-
-      if (isDragging !== this.state.isDragging) {
-        setTimeout(() => this.setState({ isDragging }));
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
       }
+
+      var _this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args)));
+
+      _this.handleStateChange = function () {
+        var isDragging = !!_this.monitor.getItem();
+
+        if (isDragging !== _this.state.isDragging) {
+          setTimeout(function () {
+            return _this.setState({ isDragging: isDragging });
+          });
+        }
+      };
+
+      _this.state = { isDragging: false };
+      return _this;
     }
 
-    render() {
-      const { selectable, components, ...props } = this.props;
+    DragAndDropCalendar.prototype.componentWillMount = function componentWillMount() {
+      var monitor = this.context.dragDropManager.getMonitor();
+      this.monitor = monitor;
+      this.unsubscribeToStateChange = monitor.subscribeToStateChange(this.handleStateChange);
+    };
+
+    DragAndDropCalendar.prototype.componentWillUnmount = function componentWillUnmount() {
+      this.monitor = null;
+      this.unsubscribeToStateChange();
+    };
+
+    DragAndDropCalendar.prototype.render = function render() {
+      var _props = this.props,
+          selectable = _props.selectable,
+          components = _props.components,
+          props = _objectWithoutProperties(_props, ['selectable', 'components']);
 
       delete props.onEventDrop;
 
-      props.selectable = selectable
-        ? 'ignoreEvents' : false;
+      props.selectable = selectable ? 'ignoreEvents' : false;
 
-      props.className = cn(
-        props.className,
-        'rbc-addons-dnd',
-        this.state.isDragging && 'rbc-addons-dnd-is-dragging'
-      )
+      props.className = (0, _classnames2.default)(props.className, 'rbc-addons-dnd', this.state.isDragging && 'rbc-addons-dnd-is-dragging');
 
-      props.components = {
-        ...components,
-        eventWrapper: DraggableEventWrapper,
-        dateCellWrapper: DateCellWrapper,
-        dayWrapper: DayWrapper
-      }
+      props.components = _extends({}, components, {
+        eventWrapper: _DraggableEventWrapper2.default,
+        dateCellWrapper: _backgroundWrapper.DateCellWrapper,
+        dayWrapper: _backgroundWrapper.DayWrapper
+      });
 
-      return <Calendar {...props} />
-    }
-  }
+      return _react2.default.createElement(Calendar, props);
+    };
+
+    return DragAndDropCalendar;
+  }(_react2.default.Component);
 
   DragAndDropCalendar.propTypes = {
-    onEventDrop: React.PropTypes.func.isRequired
-  }
+    selectable: _react2.default.PropTypes.oneOf([true, false, 'ignoreEvents']).isRequired,
+    components: _react2.default.PropTypes.object
+  };
+
+
+  DragAndDropCalendar.propTypes = {
+    onEventDrop: _react2.default.PropTypes.func.isRequired
+  };
 
   DragAndDropCalendar.contextTypes = {
-    dragDropManager: React.PropTypes.object
-  }
+    dragDropManager: _react2.default.PropTypes.object
+  };
 
   DragAndDropCalendar.childContextTypes = {
-    onEventDrop: React.PropTypes.func
-  }
+    onEventDrop: _react2.default.PropTypes.func
+  };
 
-  return DragDropContext(backend)(DragAndDropCalendar);
+  return (0, _reactDnd.DragDropContext)(backend)(DragAndDropCalendar);
 }
+module.exports = exports['default'];

@@ -1,86 +1,133 @@
-import React, { Component, PropTypes } from 'react'
-import cn from 'classnames';
+'use strict';
 
-import dates from './utils/dates';
-import { elementType } from './utils/propTypes';
-import BackgroundWrapper from './BackgroundWrapper';
-import TimeSlotGroup from './TimeSlotGroup'
+exports.__esModule = true;
 
-export default class TimeColumn extends Component {
-  static propTypes = {
-    step: PropTypes.number.isRequired,
-    culture: PropTypes.string,
-    timeslots: PropTypes.number.isRequired,
-    now: PropTypes.instanceOf(Date).isRequired,
-    min: PropTypes.instanceOf(Date).isRequired,
-    max: PropTypes.instanceOf(Date).isRequired,
-    showLabels: PropTypes.bool,
-    timeGutterFormat: PropTypes.string,
-    type: PropTypes.string.isRequired,
-    className: PropTypes.string,
+var _react = require('react');
 
-    dayWrapperComponent: elementType,
-  }
-  static defaultProps = {
-    step: 30,
-    timeslots: 2,
-    showLabels: false,
-    type: 'day',
-    className: '',
-    dayWrapperComponent: BackgroundWrapper,
-  }
+var _react2 = _interopRequireDefault(_react);
 
-  renderTimeSliceGroup(key, isNow, date) {
-    const { dayWrapperComponent, timeslots, showLabels, step, timeGutterFormat, culture } = this.props;
+var _classnames = require('classnames');
 
-    return (
-      <TimeSlotGroup
-        key={key}
-        isNow={isNow}
-        value={date}
-        step={step}
-        culture={culture}
-        timeslots={timeslots}
-        showLabels={showLabels}
-        timeGutterFormat={timeGutterFormat}
-        dayWrapperComponent={dayWrapperComponent}
-      />
-    )
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _dates = require('./utils/dates');
+
+var _dates2 = _interopRequireDefault(_dates);
+
+var _propTypes = require('./utils/propTypes');
+
+var _BackgroundWrapper = require('./BackgroundWrapper');
+
+var _BackgroundWrapper2 = _interopRequireDefault(_BackgroundWrapper);
+
+var _TimeSlotGroup = require('./TimeSlotGroup');
+
+var _TimeSlotGroup2 = _interopRequireDefault(_TimeSlotGroup);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TimeColumn = function (_Component) {
+  _inherits(TimeColumn, _Component);
+
+  function TimeColumn() {
+    _classCallCheck(this, TimeColumn);
+
+    return _possibleConstructorReturn(this, _Component.apply(this, arguments));
   }
 
-  render() {
-    const { className, children, style, now, min, max, step, timeslots } = this.props;
-    const totalMin = dates.diff(min, max, 'minutes')
-    const numGroups = Math.ceil(totalMin / (step * timeslots))
-    const renderedSlots = []
-    const groupLengthInMinutes = step * timeslots
+  TimeColumn.prototype.renderTimeSliceGroup = function renderTimeSliceGroup(key, isNow, date) {
+    var _props = this.props,
+        dayWrapperComponent = _props.dayWrapperComponent,
+        timeslots = _props.timeslots,
+        showLabels = _props.showLabels,
+        step = _props.step,
+        timeGutterFormat = _props.timeGutterFormat,
+        culture = _props.culture;
 
-    let date = min
-    let next = date
-    let isNow = false
+
+    return _react2.default.createElement(_TimeSlotGroup2.default, {
+      key: key,
+      isNow: isNow,
+      value: date,
+      step: step,
+      culture: culture,
+      timeslots: timeslots,
+      showLabels: showLabels,
+      timeGutterFormat: timeGutterFormat,
+      dayWrapperComponent: dayWrapperComponent
+    });
+  };
+
+  TimeColumn.prototype.render = function render() {
+    var _props2 = this.props,
+        className = _props2.className,
+        children = _props2.children,
+        style = _props2.style,
+        now = _props2.now,
+        min = _props2.min,
+        max = _props2.max,
+        step = _props2.step,
+        timeslots = _props2.timeslots;
+
+    var totalMin = _dates2.default.diff(min, max, 'minutes');
+    var numGroups = Math.ceil(totalMin / (step * timeslots));
+    var renderedSlots = [];
+    var groupLengthInMinutes = step * timeslots;
+
+    var date = min;
+    var next = date;
+    var isNow = false;
 
     for (var i = 0; i < numGroups; i++) {
-      isNow = dates.inRange(
-          now
-        , date
-        , dates.add(next, groupLengthInMinutes - 1, 'minutes')
-        , 'minutes'
-      )
+      isNow = _dates2.default.inRange(now, date, _dates2.default.add(next, groupLengthInMinutes - 1, 'minutes'), 'minutes');
 
-      next = dates.add(date, groupLengthInMinutes, 'minutes');
-      renderedSlots.push(this.renderTimeSliceGroup(i, isNow, date))
+      next = _dates2.default.add(date, groupLengthInMinutes, 'minutes');
+      renderedSlots.push(this.renderTimeSliceGroup(i, isNow, date));
 
-      date = next
+      date = next;
     }
 
-    return (
-      <div
-        className={cn(className, 'rbc-time-column')}
-        style={style}
-      >
-        {renderedSlots}
-        {children}
-      </div>
-    )
-  }
-}
+    return _react2.default.createElement(
+      'div',
+      {
+        className: (0, _classnames2.default)(className, 'rbc-time-column'),
+        style: style
+      },
+      renderedSlots,
+      children
+    );
+  };
+
+  return TimeColumn;
+}(_react.Component);
+
+TimeColumn.propTypes = {
+  step: _react.PropTypes.number.isRequired,
+  culture: _react.PropTypes.string,
+  timeslots: _react.PropTypes.number.isRequired,
+  now: _react.PropTypes.instanceOf(Date).isRequired,
+  min: _react.PropTypes.instanceOf(Date).isRequired,
+  max: _react.PropTypes.instanceOf(Date).isRequired,
+  showLabels: _react.PropTypes.bool,
+  timeGutterFormat: _react.PropTypes.string,
+  type: _react.PropTypes.string.isRequired,
+  className: _react.PropTypes.string,
+
+  dayWrapperComponent: _propTypes.elementType
+};
+TimeColumn.defaultProps = {
+  step: 30,
+  timeslots: 2,
+  showLabels: false,
+  type: 'day',
+  className: '',
+  dayWrapperComponent: _BackgroundWrapper2.default
+};
+exports.default = TimeColumn;
+module.exports = exports['default'];

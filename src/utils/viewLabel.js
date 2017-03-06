@@ -1,25 +1,37 @@
-import { views } from './constants';
-import defaultFormats from '../formats';
-import localizer from '../localizer';
+'use strict';
 
-import VIEWS from '../Views';
+exports.__esModule = true;
 
-const Formats = {
-  [views.MONTH]: 'monthHeaderFormat',
-  [views.WEEK]: 'dayRangeHeaderFormat',
-  [views.DAY]: 'dayHeaderFormat',
-  [views.AGENDA]: 'agendaHeaderFormat'
+var _Formats;
+
+exports.default = viewLabel;
+
+var _constants = require('./constants');
+
+var _formats = require('../formats');
+
+var _formats2 = _interopRequireDefault(_formats);
+
+var _localizer = require('../localizer');
+
+var _localizer2 = _interopRequireDefault(_localizer);
+
+var _Views = require('../Views');
+
+var _Views2 = _interopRequireDefault(_Views);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Formats = (_Formats = {}, _Formats[_constants.views.MONTH] = 'monthHeaderFormat', _Formats[_constants.views.WEEK] = 'dayRangeHeaderFormat', _Formats[_constants.views.DAY] = 'dayHeaderFormat', _Formats[_constants.views.AGENDA] = 'agendaHeaderFormat', _Formats);
+
+function viewLabel(date, view, formats, culture) {
+  var View = _Views2.default[view];
+  var headerSingle = view === _constants.views.MONTH || view === _constants.views.DAY;
+
+  formats = (0, _formats2.default)(formats || {});
+
+  var headerFormat = formats[Formats[view]];
+
+  return headerSingle ? _localizer2.default.format(date, headerFormat, culture) : _localizer2.default.format(View.range(date, { culture: culture }), headerFormat, culture);
 }
-
-export default function viewLabel(date, view, formats, culture){
-  let View = VIEWS[view];
-  let headerSingle = view === views.MONTH || view === views.DAY
-
-  formats = defaultFormats(formats || {})
-
-  let headerFormat = formats[Formats[view]];
-
-  return headerSingle
-    ? localizer.format(date, headerFormat, culture)
-    : localizer.format(View.range(date, { culture }), headerFormat, culture)
-}
+module.exports = exports['default'];
